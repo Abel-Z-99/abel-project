@@ -1,0 +1,27 @@
+page {
+  background: #f7f7f7;
+  color: #111;
+  font-size: 28rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.muted {
+  color: #666;
+}
+
+.btnPrimary {
+  background: #1677ff;
+  color: #fff;
+}
+

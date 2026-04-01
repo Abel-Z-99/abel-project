@@ -1,0 +1,105 @@
+@host = http://localhost:5258
+@adminToken = REPLACE_WITH_ADMIN_JWT
+@userToken = REPLACE_WITH_USER_JWT
+
+### Login (admin)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "userNameOrEmail": "admin",
+  "password": "Admin123!"
+}
+
+### Admin create user
+POST {{host}}/api/admin/users
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "username": "newuser",
+  "email": "newuser@webshop.local",
+  "password": "NewUser123!",
+  "phone": "13800000000",
+  "avatarUrl": ""
+}
+
+### Products - list (with paging/filter/search)
+GET {{host}}/api/products?page=1&pageSize=10&isOnSale=true&keyword=iphone
+Accept: application/json
+
+###
+
+### Products - create (admin)
+POST {{host}}/api/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Huawei Mate 60",
+  "description": "Smartphone 256GB",
+  "price": 4999,
+  "stock": 30,
+  "imageUrl": "",
+  "isOnSale": true
+}
+
+###
+
+### Create order (user)
+POST {{host}}/api/orders
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "shippingAddress": "Shenzhen Nanshan District",
+  "contactName": "Tom",
+  "contactPhone": "13900000000",
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 1
+    },
+    {
+      "productId": 2,
+      "quantity": 2
+    }
+  ]
+}
+
+###
+
+### My orders
+GET {{host}}/api/orders/mine
+Authorization: Bearer {{userToken}}
+
+###
+
+### Admin orders (paging)
+GET {{host}}/api/orders?page=1&pageSize=10
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Update order status (admin)
+PUT {{host}}/api/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "Paid"
+}
+
+###
+
+### Admin users (paging/search)
+GET {{host}}/api/admin/users?page=1&pageSize=10&keyword=demo
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Dashboard summary
+GET {{host}}/api/admin/dashboard/summary
+Authorization: Bearer {{adminToken}}
+
+###

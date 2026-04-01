@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="card">
+    <image class="cover" src="/assets/images/login/header-bg.png" mode="aspectFill" />
+    <view class="title">WebShop 登录</view>
+    <view class="subtitle muted">欢迎回来，登录后开始选购商品</view>
+
+    <view class="field">
+      <text class="label">账号</text>
+      <input class="input" placeholder="用户名或邮箱" value="{{userNameOrEmail}}" bindinput="onInputUser" />
+    </view>
+
+    <view class="field">
+      <text class="label">密码</text>
+      <input class="input" placeholder="密码" password value="{{password}}" bindinput="onInputPwd" />
+    </view>
+
+    <button class="btnPrimary loginBtn" loading="{{loading}}" bindtap="onSubmit">立即登录</button>
+    <view class="hint muted">默认：demo / Demo123!</view>
+  </view>
+</view>
+

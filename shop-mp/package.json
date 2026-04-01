@@ -1,0 +1,9 @@
+{
+  "name": "webshop-shop-mp",
+  "private": true,
+  "version": "0.0.0",
+  "devDependencies": {
+    "miniprogram-api-typings": "^5.1.2",
+    "typescript": "~5.9.3"
+  }
+}

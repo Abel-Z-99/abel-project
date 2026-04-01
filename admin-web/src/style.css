@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --admin-bg: #f1f5f9;
+  --admin-sidebar: #0f172a;
+  --admin-sidebar-hover: #1e293b;
+  --admin-header-h: 56px;
+  --admin-radius: 12px;
+  --admin-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --admin-font: 'Segoe UI', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei',
+    sans-serif;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  min-height: 100vh;
+}
+
+body {
+  font-family: var(--admin-font);
+  font-size: 14px;
+  color: #334155;
+  background: var(--admin-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 列表页统一卡片 */
+.admin-page-card {
+  border-radius: var(--admin-radius);
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--admin-shadow);
+}
+
+.admin-page-card :deep(.el-card__header) {
+  padding: 16px 20px;
+  font-weight: 600;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.admin-page-card :deep(.el-card__body) {
+  padding: 20px;
+}
+
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-toolbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 表格区域略紧凑、表头更清晰 */
+.admin-page-card :deep(.el-table th.el-table__cell) {
+  background: #f8fafc !important;
+  color: #475569;
+  font-weight: 600;
+}
+
+.admin-page-card :deep(.el-pagination) {
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+/* 登录页 */
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(145deg, #1e3a5f 0%, #0f172a 45%, #1e293b 100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: var(--admin-radius);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+}
+
+.login-card :deep(.el-card__header) {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+}

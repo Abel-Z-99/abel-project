@@ -1,0 +1,27 @@
+<view class="container">
+  <view class="card" wx:if="{{product}}">
+    <view class="row">
+      <view class="name">{{product.name}}</view>
+      <view class="price">¥{{product.price}}</view>
+    </view>
+    <view class="muted">数量：{{quantity}}</view>
+    <view class="muted">小计：¥{{subtotal}}</view>
+  </view>
+
+  <view class="card" style="margin-top: 18rpx;">
+    <view class="field">
+      <text class="label">收货地址</text>
+      <input class="input" placeholder="请输入收货地址" value="{{shippingAddress}}" bindinput="onInputAddress" />
+    </view>
+    <view class="field">
+      <text class="label">联系人</text>
+      <input class="input" placeholder="请输入联系人姓名" value="{{contactName}}" bindinput="onInputName" />
+    </view>
+    <view class="field">
+      <text class="label">联系电话</text>
+      <input class="input" placeholder="请输入联系电话" value="{{contactPhone}}" bindinput="onInputPhone" />
+    </view>
+    <button class="btnPrimary" loading="{{loading}}" bindtap="submit">提交订单</button>
+  </view>
+</view>
+

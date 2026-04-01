@@ -1,0 +1,32 @@
+.container {
+  padding: 24rpx;
+}
+
+.order {
+  margin-bottom: 18rpx;
+}
+
+.no {
+  font-weight: 600;
+}
+
+.status {
+  color: #1677ff;
+  font-weight: 600;
+}
+
+.items {
+  margin-top: 12rpx;
+  border-top: 1rpx solid #eee;
+  padding-top: 12rpx;
+}
+
+.itemRow {
+  padding: 6rpx 0;
+}
+
+.footer {
+  text-align: center;
+  padding: 24rpx 0;
+}
+

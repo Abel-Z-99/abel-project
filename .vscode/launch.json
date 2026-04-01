@@ -1,0 +1,76 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Fullstack (WebApi + Admin-Web)",
+            "configurations": [
+                "WebApi (Debug, 5000)",
+                "Admin-Web (Chrome)"
+            ],
+            "stopAll": true
+        }
+    ],
+    "configurations": [
+
+        {
+            "name": "WebApi (Debug)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/WebApi/bin/Debug/net8.0/WebApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/WebApi",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            }
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        },
+        {
+            "name": "WebApi (Debug, 5000)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/WebApi/bin/Debug/net8.0/WebApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/WebApi",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5000"
+            },
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Admin-Web (Chrome)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/admin-web",
+            // admin-web:dev 会先 wait-on 127.0.0.1:5000 再启动 Vite，避免先于 WebApi 就绪
+            "preLaunchTask": "admin-web:dev",
+            "sourceMaps": true
+        },
+        {
+            "name": "Admin-Web Attach (Chrome 9222)",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}/admin-web",
+            "sourceMaps": true
+        }
+    ]
+}

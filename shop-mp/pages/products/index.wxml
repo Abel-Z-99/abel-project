@@ -1,0 +1,40 @@
+<view class="container">
+  <swiper class="banner" autoplay indicator-dots circular interval="3500" duration="500">
+    <block wx:for="{{banners}}" wx:key="*this">
+      <swiper-item>
+        <image class="bannerImg" src="{{item}}" mode="aspectFill" />
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <view class="titleRow">
+    <view class="title">精选商品</view>
+    <view class="muted">共 {{total}} 件</view>
+  </view>
+
+  <view class="card searchBar">
+    <input class="searchInput" placeholder="搜索商品" value="{{keyword}}" bindinput="onInputKeyword" confirm-type="search" bindconfirm="onSearch" />
+    <button size="mini" class="searchBtn" bindtap="onSearch">搜索</button>
+  </view>
+
+  <view class="list">
+    <block wx:for="{{items}}" wx:key="id">
+      <view class="card item" bindtap="goDetail" data-id="{{item.id}}">
+        <image class="thumb" src="{{item.imageUrl || defaultImage}}" mode="aspectFill" />
+        <view class="row">
+          <view class="name">{{item.name}}</view>
+          <view class="price">¥{{item.price.toFixed ? item.price.toFixed(2) : item.price}}</view>
+        </view>
+        <view class="muted desc">{{item.description}}</view>
+        <view class="row meta">
+          <view class="muted">库存：{{item.stock}}</view>
+          <view class="tag {{item.isOnSale ? 'on' : 'off'}}">{{item.isOnSale ? '在售' : '下架'}}</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="muted footer" wx:if="{{loading}}">加载中...</view>
+  <view class="muted footer" wx:if="{{!loading && noMore}}">没有更多了</view>
+</view>
+

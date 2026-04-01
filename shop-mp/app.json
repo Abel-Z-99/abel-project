@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/login/index",
+    "pages/products/index",
+    "pages/product-detail/index",
+    "pages/checkout/index",
+    "pages/orders/index",
+    "pages/me/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "WebShop",
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundTextStyle": "light",
+    "backgroundColor": "#f7f7f7"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#1677ff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/products/index", "text": "商品" },
+      { "pagePath": "pages/orders/index", "text": "订单" },
+      { "pagePath": "pages/me/index", "text": "我的" }
+    ]
+  }
+}
+

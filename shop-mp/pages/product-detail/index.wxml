@@ -1,0 +1,26 @@
+<view class="container" wx:if="{{product}}">
+  <view class="card">
+    <image class="hero" src="{{product.imageUrl || defaultImage}}" mode="aspectFill" />
+    <view class="name">{{product.name}}</view>
+    <view class="muted">{{product.description}}</view>
+    <view class="row meta">
+      <view class="price">¥{{product.price}}</view>
+      <view class="stock">库存：{{product.stock}}</view>
+    </view>
+  </view>
+
+  <view class="card" style="margin-top: 18rpx;">
+    <view class="row qtyRow">
+      <text>数量</text>
+      <view class="qty">
+        <button size="mini" class="qtyBtn" bindtap="dec">-</button>
+        <text class="qtyText">{{quantity}}</text>
+        <button size="mini" class="qtyBtn" bindtap="inc">+</button>
+      </view>
+    </view>
+    <button class="btnPrimary orderBtn" style="margin-top: 18rpx;" bindtap="goCheckout">立即购买</button>
+  </view>
+</view>
+
+<view class="container muted" wx:else>加载中...</view>
+
