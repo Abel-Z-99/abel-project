@@ -110,7 +110,7 @@ public class OrderService : IOrderService
         return data;
     }
 
-    public async Task<PagedResult<AdminOrderDto>> GetAllPagedAsync(string? keyword,int page, int pageSize)
+    public async Task<PagedResult<AdminOrderDto>> GetAllPagedAsync(string? keyword, int page, int pageSize, string? sortBy, bool sortDesc)
     {
         page = page <= 0 ? 1 : page;
         pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
@@ -125,10 +125,11 @@ public class OrderService : IOrderService
             query = query.Where(x => x.OrderNo.Contains(keyword) || x.User.Username.Contains(keyword) || x.Status.Contains(keyword) );
         }
 
+        query = ApplyAdminSort(query, sortBy, sortDesc);
+
         var total = await query.CountAsync();
 
         var data = await query
-            .OrderByDescending(o => o.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(o => new AdminOrderDto
@@ -193,6 +194,34 @@ public class OrderService : IOrderService
             "Completed" => "已完成",
             "Cancelled" => "已取消",
             _ => status
+        };
+    }
+
+    private static IQueryable<Order> ApplyAdminSort(IQueryable<Order> query, string? sortBy, bool sortDesc)
+    {
+        if (string.IsNullOrWhiteSpace(sortBy))
+        {
+            return query.OrderByDescending(o => o.Id);
+        }
+
+        var key = sortBy.Trim().ToLowerInvariant();
+        return (key, sortDesc) switch
+        {
+            ("id", true) => query.OrderByDescending(o => o.Id),
+            ("id", false) => query.OrderBy(o => o.Id),
+            ("orderno", true) => query.OrderByDescending(o => o.OrderNo),
+            ("orderno", false) => query.OrderBy(o => o.OrderNo),
+            ("status", true) => query.OrderByDescending(o => o.Status),
+            ("status", false) => query.OrderBy(o => o.Status),
+            ("totalamount", true) => query.OrderByDescending(o => o.TotalAmount),
+            ("totalamount", false) => query.OrderBy(o => o.TotalAmount),
+            ("createdat", true) => query.OrderByDescending(o => o.CreatedAt),
+            ("createdat", false) => query.OrderBy(o => o.CreatedAt),
+            ("userid", true) => query.OrderByDescending(o => o.UserId),
+            ("userid", false) => query.OrderBy(o => o.UserId),
+            ("username", true) => query.OrderByDescending(o => o.User.Username),
+            ("username", false) => query.OrderBy(o => o.User.Username),
+            _ => query.OrderByDescending(o => o.Id),
         };
     }
 }

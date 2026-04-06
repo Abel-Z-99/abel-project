@@ -17,7 +17,8 @@ public interface IOrderService
     /// <summary>
     /// 管理员分页查询全部订单。
     /// </summary>
-    Task<PagedResult<AdminOrderDto>> GetAllPagedAsync(string? keyword,int page, int pageSize);
+    /// <param name="sortBy">可排序字段：id、orderNo、status、totalAmount、createdAt、userId、username；空则按 id 降序。</param>
+    Task<PagedResult<AdminOrderDto>> GetAllPagedAsync(string? keyword, int page, int pageSize, string? sortBy, bool sortDesc);
 
     /// <summary>
     /// 更新订单状态；订单不存在返回 false；状态非法抛出 <see cref="InvalidOperationException"/>。

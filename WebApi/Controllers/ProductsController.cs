@@ -23,9 +23,11 @@ public class ProductsController : ControllerBase
         [FromQuery] bool? isOnSale,
         [FromQuery] string? keyword,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDesc = false)
     {
-        var result = await _productService.GetPagedAsync(isOnSale, keyword, page, pageSize);
+        var result = await _productService.GetPagedAsync(isOnSale, keyword, page, pageSize, sortBy, sortDesc);
         return Ok(ApiResponse<PagedResult<ProductDto>>.Ok(result));
     }
 

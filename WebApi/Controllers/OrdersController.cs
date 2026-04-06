@@ -56,9 +56,11 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<ApiResponse<PagedResult<AdminOrderDto>>>> AllOrders(
         [FromQuery] string? keyword,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDesc = false)
     {
-        var result = await _orderService.GetAllPagedAsync(keyword,page, pageSize);
+        var result = await _orderService.GetAllPagedAsync(keyword, page, pageSize, sortBy, sortDesc);
         return Ok(ApiResponse<PagedResult<AdminOrderDto>>.Ok(result));
     }
 

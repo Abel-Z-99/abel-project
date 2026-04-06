@@ -8,7 +8,13 @@ import type { AdminUserDto } from '../types/models'
 const loading = ref(false)
 const list = ref<AdminUserDto[]>([])
 const total = ref(0)
-const query = reactive({ page: 1, pageSize: 10, keyword: '' })
+const query = reactive({
+  page: 1,
+  pageSize: 10,
+  keyword: '',
+  sortBy: undefined as string | undefined,
+  sortDesc: false,
+})
 const dialogVisible = ref(false)
 const formRef = ref<FormInstance>()
 const createForm = reactive({
@@ -22,6 +28,23 @@ const rules: FormRules<typeof createForm> = {
   username: [{ required: true, message: 'Username is required', trigger: 'blur' }],
   email: [{ required: true, message: 'Email is required', trigger: 'blur' }],
   password: [{ required: true, message: 'Password is required', trigger: 'blur' }],
+}
+
+const onSortChange = (payload: {
+  column: { columnKey?: string }
+  prop?: string
+  order: string | null
+}) => {
+  const key = payload.column?.columnKey || payload.prop
+  if (!payload.order || !key) {
+    query.sortBy = undefined
+    query.sortDesc = false
+  } else {
+    query.sortBy = key
+    query.sortDesc = payload.order === 'descending'
+  }
+  query.page = 1
+  loadData()
 }
 
 const loadData = async () => {
@@ -77,12 +100,12 @@ onMounted(loadData)
         </div>
       </div>
     </template>
-    <el-table :data="list" v-loading="loading">
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="username" label="用户名" />
-      <el-table-column prop="email" label="邮箱" />
-      <el-table-column prop="role" label="角色" width="100" />
-      <el-table-column prop="status" label="状态" width="100">
+    <el-table :data="list" v-loading="loading" @sort-change="onSortChange">
+      <el-table-column prop="id" label="ID" width="80" sortable="custom" />
+      <el-table-column prop="username" label="用户名" min-width="120" sortable="custom" />
+      <el-table-column prop="email" label="邮箱" min-width="180" sortable="custom" />
+      <el-table-column prop="role" label="角色" width="100" sortable="custom" />
+      <el-table-column prop="status" label="状态" width="100" sortable="custom">
         <template #default="{ row }">{{ row.status ? '活跃' : '禁用' }}</template>
       </el-table-column>
       <el-table-column label="操作" width="140">

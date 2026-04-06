@@ -1,8 +1,22 @@
 import http from './http'
 import type { PagedResult, ProductDto, ProductUpsertRequest } from '../types/models'
 
-export function getProducts(params: { page: number; pageSize: number; keyword?: string }) {
-  return http.get<unknown, PagedResult<ProductDto>>('/products', { params })
+export function getProducts(params: {
+  page: number
+  pageSize: number
+  keyword?: string
+  sortBy?: string
+  sortDesc?: boolean
+}) {
+  const { page, pageSize, keyword, sortBy, sortDesc } = params
+  return http.get<unknown, PagedResult<ProductDto>>('/products', {
+    params: {
+      page,
+      pageSize,
+      ...(keyword ? { keyword } : {}),
+      ...(sortBy ? { sortBy, sortDesc: sortDesc ?? false } : {}),
+    },
+  })
 }
 
 export function createProduct(payload: ProductUpsertRequest) {

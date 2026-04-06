@@ -8,7 +8,13 @@ import type { ProductDto, ProductUpsertRequest } from '../types/models'
 const loading = ref(false)
 const list = ref<ProductDto[]>([])
 const total = ref(0)
-const query = reactive({ page: 1, pageSize: 10, keyword: '' })
+const query = reactive({
+  page: 1,
+  pageSize: 10,
+  keyword: '',
+  sortBy: undefined as string | undefined,
+  sortDesc: false,
+})
 const dialogVisible = ref(false)
 const editingId = ref<number | null>(null)
 const imageUploading = ref(false)
@@ -81,6 +87,23 @@ const resetForm = () => {
   form.stock = 0
   form.imageUrl = ''
   form.isOnSale = true
+}
+
+const onSortChange = (payload: {
+  column: { columnKey?: string }
+  prop?: string
+  order: string | null
+}) => {
+  const key = payload.column?.columnKey || payload.prop
+  if (!payload.order || !key) {
+    query.sortBy = undefined
+    query.sortDesc = false
+  } else {
+    query.sortBy = key
+    query.sortDesc = payload.order === 'descending'
+  }
+  query.page = 1
+  loadData()
 }
 
 const loadData = async () => {
@@ -164,12 +187,12 @@ onMounted(loadData)
         </div>
       </div>
     </template>
-    <el-table :data="list" v-loading="loading">
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="name" label="产品名称" />
-      <el-table-column prop="price" label="单价" width="120" />
-      <el-table-column prop="stock" label="库存" width="100" />
-      <el-table-column prop="isOnSale" label="是否在售" width="100">
+    <el-table :data="list" v-loading="loading" @sort-change="onSortChange">
+      <el-table-column prop="id" label="ID" width="80" sortable="custom" />
+      <el-table-column prop="name" label="产品名称" sortable="custom" min-width="160" />
+      <el-table-column prop="price" label="单价" width="120" sortable="custom" />
+      <el-table-column prop="stock" label="库存" width="100" sortable="custom" />
+      <el-table-column prop="isOnSale" column-key="isOnSale" label="是否在售" width="120" sortable="custom">
         <template #default="{ row }">{{ row.isOnSale ? '是' : '否' }}</template>
       </el-table-column>
       <el-table-column label="操作" width="180">

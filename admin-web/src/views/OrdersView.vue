@@ -7,9 +7,32 @@ import type { AdminOrderDto } from '../types/models'
 const loading = ref(false)
 const list = ref<AdminOrderDto[]>([])
 const total = ref(0)
-const query = reactive({ page: 1, pageSize: 10 , keyword: '' })
+const query = reactive({
+  page: 1,
+  pageSize: 10,
+  keyword: '',
+  sortBy: undefined as string | undefined,
+  sortDesc: false,
+})
 const detailVisible = ref(false)
 const currentOrder = ref<AdminOrderDto | null>(null)
+
+const onSortChange = (payload: {
+  column: { columnKey?: string }
+  prop?: string
+  order: string | null
+}) => {
+  const key = payload.column?.columnKey || payload.prop
+  if (!payload.order || !key) {
+    query.sortBy = undefined
+    query.sortDesc = false
+  } else {
+    query.sortBy = key
+    query.sortDesc = payload.order === 'descending'
+  }
+  query.page = 1
+  loadData()
+}
 
 const loadData = async () => {
   loading.value = true
@@ -46,18 +69,18 @@ onMounted(loadData)
         </div>
       </div>
     </template>
-    <el-table :data="list" v-loading="loading">
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="orderNo" label="订单编号" width="220">
+    <el-table :data="list" v-loading="loading" @sort-change="onSortChange">
+      <el-table-column prop="id" label="ID" width="80" sortable="custom" />
+      <el-table-column prop="orderNo" label="订单编号" width="220" sortable="custom">
         <template #default="{ row }">
           <el-button link type="primary" @click="showDetail(row)">
             {{ row.orderNo }}
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="customer.username" label="用户" />
-      <el-table-column prop="totalAmount" label="订单金额" width="120" />
-      <el-table-column prop="status" label="状态" width="120" />
+      <el-table-column prop="customer.username" column-key="username" label="用户" min-width="120" sortable="custom" />
+      <el-table-column prop="totalAmount" label="订单金额" width="140" sortable="custom" />
+      <el-table-column prop="status" label="状态" width="120" sortable="custom" />
       <el-table-column label="操作" width="380">
         <template #default="{ row }">
           

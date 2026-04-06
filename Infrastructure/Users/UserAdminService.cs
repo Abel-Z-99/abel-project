@@ -1,6 +1,7 @@
 using Application.Auth;
 using Application.Common;
 using Application.Users;
+using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,7 @@ public class UserAdminService : IUserAdminService
         _authService = authService;
     }
 
-    public async Task<PagedResult<AdminUserDto>> GetPagedAsync(string? keyword, int page, int pageSize)
+    public async Task<PagedResult<AdminUserDto>> GetPagedAsync(string? keyword, int page, int pageSize, string? sortBy, bool sortDesc)
     {
         var query = _dbContext.Users.AsQueryable();
 
@@ -26,12 +27,13 @@ public class UserAdminService : IUserAdminService
             query = query.Where(x => x.Username.Contains(keyword) || x.Email.Contains(keyword));
         }
 
+        query = ApplySort(query, sortBy, sortDesc);
+
         page = page <= 0 ? 1 : page;
         pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
         var total = await query.CountAsync();
 
         var users = await query
-            .OrderByDescending(x => x.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(x => new AdminUserDto
@@ -83,5 +85,33 @@ public class UserAdminService : IUserAdminService
         user.Status = status;
         await _dbContext.SaveChangesAsync();
         return true;
+    }
+
+    private static IQueryable<User> ApplySort(IQueryable<User> query, string? sortBy, bool sortDesc)
+    {
+        if (string.IsNullOrWhiteSpace(sortBy))
+        {
+            return query.OrderByDescending(x => x.Id);
+        }
+
+        var key = sortBy.Trim().ToLowerInvariant();
+        return (key, sortDesc) switch
+        {
+            ("id", true) => query.OrderByDescending(x => x.Id),
+            ("id", false) => query.OrderBy(x => x.Id),
+            ("username", true) => query.OrderByDescending(x => x.Username),
+            ("username", false) => query.OrderBy(x => x.Username),
+            ("email", true) => query.OrderByDescending(x => x.Email),
+            ("email", false) => query.OrderBy(x => x.Email),
+            ("phone", true) => query.OrderByDescending(x => x.Phone),
+            ("phone", false) => query.OrderBy(x => x.Phone),
+            ("role", true) => query.OrderByDescending(x => x.Role),
+            ("role", false) => query.OrderBy(x => x.Role),
+            ("status", true) => query.OrderByDescending(x => x.Status),
+            ("status", false) => query.OrderBy(x => x.Status),
+            ("createdat", true) => query.OrderByDescending(x => x.CreatedAt),
+            ("createdat", false) => query.OrderBy(x => x.CreatedAt),
+            _ => query.OrderByDescending(x => x.Id),
+        };
     }
 }

@@ -5,7 +5,8 @@ namespace Application.Users;
 
 public interface IUserAdminService
 {
-    Task<PagedResult<AdminUserDto>> GetPagedAsync(string? keyword, int page, int pageSize);
+    /// <param name="sortBy">可排序字段：id、username、email、phone、role、status、createdAt；空则按 id 降序。</param>
+    Task<PagedResult<AdminUserDto>> GetPagedAsync(string? keyword, int page, int pageSize, string? sortBy, bool sortDesc);
 
     /// <summary>
     /// 管理员创建用户（内部调用注册逻辑）。失败抛出 <see cref="InvalidOperationException"/>。

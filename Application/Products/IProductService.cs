@@ -4,7 +4,8 @@ namespace Application.Products;
 
 public interface IProductService
 {
-    Task<PagedResult<ProductDto>> GetPagedAsync(bool? isOnSale, string? keyword, int page, int pageSize);
+    /// <param name="sortBy">可排序字段：id、name、price、stock、createdAt、isOnSale；空则按 id 降序。</param>
+    Task<PagedResult<ProductDto>> GetPagedAsync(bool? isOnSale, string? keyword, int page, int pageSize, string? sortBy, bool sortDesc);
     Task<ProductDto?> GetByIdAsync(int id);
     Task<ProductDto> CreateAsync(ProductUpsertRequest request);
     Task<bool> UpdateAsync(int id, ProductUpsertRequest request);
