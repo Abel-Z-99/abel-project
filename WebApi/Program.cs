@@ -1,6 +1,7 @@
 using Application;
 using Infrastructure;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace WebApi
@@ -49,6 +50,13 @@ namespace WebApi
 				.AddApplication();
 
 			var app = builder.Build();
+
+			// 自动执行迁移，方便本地与容器环境开箱即用。
+			using (var migrateScope = app.Services.CreateScope())
+			{
+				var db = migrateScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+				db.Database.Migrate();
+			}
 
 			var seedEnabled = builder.Configuration.GetValue<bool>("Seed:Enabled");
 			if (seedEnabled)

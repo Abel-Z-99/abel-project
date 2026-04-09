@@ -1,0 +1,24 @@
+# VCS / IDE
+.git
+.gitignore
+.vs/
+.vscode/
+**/*.user
+**/*.suo
+
+# Build outputs
+**/bin/
+**/obj/
+**/dist/
+**/node_modules/
+
+# Unused projects for WebApi image context
+shop-mp/
+admin-web/
+
+# Runtime/generated data
+WebApi/wwwroot/uploads/
+
+# Misc
+**/*.log
+README.md

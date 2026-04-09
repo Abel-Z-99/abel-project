@@ -125,6 +125,44 @@ npm run dev
 npm run build
 ```
 
+## Docker 快速启动
+
+仓库已提供：
+
+- `WebApi/Dockerfile`
+- `admin-web/Dockerfile`
+- `admin-web/nginx.conf`
+- `docker-compose.yml`（含 SQL Server / WebApi / admin-web）
+
+在仓库根目录执行：
+
+```bash
+docker compose up -d --build
+```
+
+启动后访问：
+
+- 管理端：`http://localhost:5173`
+- 后端 Swagger：`http://localhost:5000/swagger`
+
+说明：
+
+- `webapi` 启动时会自动执行 EF Core `Migrate()`，并按配置执行种子数据。
+- SQL Server 默认密码来自 `SA_PASSWORD`，未设置时使用 compose 中的默认值（建议在本地用 `.env` 覆盖）。
+- 上传图片目录已挂载卷：`/app/wwwroot/uploads`。
+
+## CI/CD（GitHub Actions）
+
+已提供两个工作流：
+
+- `CI`：`.github/workflows/ci.yml`
+  - 后端：`dotnet restore/build/test`
+  - 前端：`admin-web npm ci + npm run build`
+- `Docker Publish`：`.github/workflows/docker-publish.yml`
+  - 在 `main` push 或手动触发时，构建并推送镜像到 GHCR：
+    - `ghcr.io/<owner>/webshop-webapi`
+    - `ghcr.io/<owner>/webshop-admin-web`
+
 ## 调试建议
 
 - VS Code 已包含联调配置：`Fullstack (WebApi + Admin-Web)`
@@ -133,7 +171,4 @@ npm run build
   - `admin-web/.env.development` 的 `VITE_API_TARGET` 是否一致
   - 修改 `.env` 后是否重启了 Vite
 
-## 说明
-
-- 本仓库为学习/演示项目，可按需拆分为独立后端服务与前端应用。
-- 首次提交已推送到 `main` 分支，可在此基础上继续迭代（如 CI/CD、容器化、权限细分、自动化测试等）。
+#
