@@ -106,25 +106,6 @@ export const API_BASE_URL = 'http://localhost:5000/api'
 
 （如需修改，请调整种子数据或登录页默认表单值）
 
-## 常用开发命令
-
-### .NET
-
-```bash
-dotnet restore
-dotnet build WebShop.sln
-dotnet test
-```
-
-### admin-web
-
-```bash
-cd admin-web
-npm install
-npm run dev
-npm run build
-```
-
 ## Docker 快速启动
 
 仓库已提供：
