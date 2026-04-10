@@ -116,9 +116,8 @@ jobs:
             if ! $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --remove-orphans; then
               # 兼容旧版 docker-compose(v1) 在重建容器时偶发 ContainerConfig/network 相关报错。
               if [ "$COMPOSE_CMD" = "docker-compose" ]; then
-                echo "First compose up failed on docker-compose v1, trying cleanup and retry..."
-                docker rm -f webshop-webapi webshop-admin-web webshop-redis webshop-mssql 2>/dev/null || true
-                docker network rm webshop_default 2>/dev/null || true
+                echo "First compose up failed on docker-compose v1, trying 'down' and force recreate..."
+                $COMPOSE_CMD -f docker-compose.aliyun.yml down --remove-orphans || true
                 $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --remove-orphans --force-recreate
               else
                 exit 1
