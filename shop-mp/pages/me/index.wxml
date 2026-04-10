@@ -1,13 +1,14 @@
 <view class="container">
-  <view class="card">
+  <view class="card profile">
+    <view class="avatar">W</view>
     <view class="row">
-      <view>当前用户</view>
+      <view class="muted">当前用户</view>
       <view class="name">{{username || '-'}}</view>
     </view>
   </view>
 
   <view class="card" style="margin-top: 18rpx;">
-    <button bindtap="logout">退出登录</button>
+    <button class="btnPrimary" bindtap="logout">退出登录</button>
   </view>
 </view>
 

@@ -2,7 +2,26 @@
   padding: 24rpx;
 }
 
+.profile {
+  background: linear-gradient(135deg, #eef5ff, #ffffff);
+}
+
+.avatar {
+  width: 86rpx;
+  height: 86rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1677ff, #5fb3ff);
+  color: #fff;
+  font-weight: 700;
+  font-size: 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18rpx;
+}
+
 .name {
   font-weight: 700;
+  color: #0f172a;
 }
 

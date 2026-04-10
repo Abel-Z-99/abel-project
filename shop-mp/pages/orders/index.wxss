@@ -4,25 +4,39 @@
 
 .order {
   margin-bottom: 18rpx;
+  border-radius: 20rpx;
 }
 
 .no {
   font-weight: 600;
+  color: #0f172a;
 }
 
 .status {
   color: #1677ff;
   font-weight: 600;
+  background: #eaf2ff;
+  border-radius: 999rpx;
+  padding: 4rpx 14rpx;
+  font-size: 22rpx;
+}
+
+.line {
+  margin-top: 8rpx;
 }
 
 .items {
-  margin-top: 12rpx;
-  border-top: 1rpx solid #eee;
+  margin-top: 14rpx;
+  border-top: 1rpx solid #eef2f7;
   padding-top: 12rpx;
+  background: #fafbff;
+  border-radius: 12rpx;
+  padding-left: 12rpx;
+  padding-right: 12rpx;
 }
 
 .itemRow {
-  padding: 6rpx 0;
+  padding: 10rpx 0;
 }
 
 .footer {

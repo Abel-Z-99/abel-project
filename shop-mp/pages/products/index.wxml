@@ -1,8 +1,8 @@
 <view class="container">
   <swiper class="banner" autoplay indicator-dots circular interval="3500" duration="500">
-    <block wx:for="{{banners}}" wx:key="*this">
+    <block wx:for="{{banners}}" wx:key="id">
       <swiper-item>
-        <image class="bannerImg" src="{{item}}" mode="aspectFill" />
+        <image class="bannerImg" src="{{item.imageUrl}}" mode="aspectFill" bindtap="goBannerDetail" data-id="{{item.id}}" />
       </swiper-item>
     </block>
   </swiper>

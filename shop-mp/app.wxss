@@ -1,13 +1,16 @@
 page {
-  background: #f7f7f7;
-  color: #111;
+  background: #f5f7fb;
+  color: #111827;
   font-size: 28rpx;
+  line-height: 1.5;
 }
 
 .card {
-  background: #fff;
-  border-radius: 16rpx;
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+  border-radius: 20rpx;
   padding: 24rpx;
+  border: 1rpx solid #eef2ff;
+  box-shadow: 0 10rpx 30rpx rgba(15, 23, 42, 0.05);
 }
 
 .row {
@@ -17,11 +20,32 @@ page {
 }
 
 .muted {
-  color: #666;
+  color: #6b7280;
 }
 
 .btnPrimary {
-  background: #1677ff;
+  background: linear-gradient(135deg, #1677ff, #4f9bff);
   color: #fff;
+  border: none;
+  border-radius: 14rpx;
+  font-weight: 600;
+  min-height: 84rpx;
+  line-height: 84rpx;
+  box-shadow: 0 12rpx 24rpx rgba(22, 119, 255, 0.24);
+}
+
+.input,
+input.input {
+  background: #f3f6fb;
+  border: 1rpx solid #e5eaf3;
+  border-radius: 14rpx;
+  padding: 18rpx 16rpx;
+  transition: all 0.2s ease;
+}
+
+.chip {
+  font-size: 22rpx;
+  border-radius: 999rpx;
+  padding: 4rpx 14rpx;
 }
 

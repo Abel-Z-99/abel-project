@@ -20,9 +20,24 @@
     "backgroundColor": "#ffffff",
     "borderStyle": "black",
     "list": [
-      { "pagePath": "pages/products/index", "text": "商品" },
-      { "pagePath": "pages/orders/index", "text": "订单" },
-      { "pagePath": "pages/me/index", "text": "我的" }
+      {
+        "pagePath": "pages/products/index",
+        "text": "商品",
+        "iconPath": "assets/tabbar/products.png",
+        "selectedIconPath": "assets/tabbar/products-active.png"
+      },
+      {
+        "pagePath": "pages/orders/index",
+        "text": "订单",
+        "iconPath": "assets/tabbar/orders.png",
+        "selectedIconPath": "assets/tabbar/orders-active.png"
+      },
+      {
+        "pagePath": "pages/me/index",
+        "text": "我的",
+        "iconPath": "assets/tabbar/me.png",
+        "selectedIconPath": "assets/tabbar/me-active.png"
+      }
     ]
   }
 }

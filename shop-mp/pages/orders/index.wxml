@@ -5,8 +5,8 @@
         <view class="no">{{item.orderNo}}</view>
         <view class="status">{{item.status}}</view>
       </view>
-      <view class="muted">金额：¥{{item.totalAmount}}</view>
-      <view class="muted">下单：{{item.createdAtFormatted}}</view>
+      <view class="muted line">金额：¥{{item.totalAmount}}</view>
+      <view class="muted line">下单：{{item.createdAtFormatted}}</view>
       <view class="items">
         <block wx:for="{{item.items}}" wx:key="productId" wx:for-item="line">
           <view class="row itemRow">

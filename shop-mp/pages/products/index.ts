@@ -2,7 +2,18 @@ import { getProducts } from '../../api/products'
 import { ensureAuthed } from '../../utils/auth'
 import type { PagedResult, ProductDto } from '../../types/models'
 
-const DEFAULT_PRODUCT_IMG = 'https://dummyimage.com/240x240/f3f4f6/9ca3af.png&text=WebShop'
+const DEFAULT_PRODUCT_IMG = '/assets/images/products/nike.png'
+const BANNER_COUNT = 3
+
+function pickRandom<T>(items: T[], count: number): T[] {
+  if (items.length <= count) return items
+  const copied = [...items]
+  for (let i = copied.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[copied[i], copied[j]] = [copied[j], copied[i]]
+  }
+  return copied.slice(0, count)
+}
 
 Page({
   data: {
@@ -13,11 +24,7 @@ Page({
     total: 0,
     loading: false,
     noMore: false,
-    banners: [
-      '/assets/images/products/xiaomi.png',
-      '/assets/images/products/iPhone.png',
-      '/assets/images/products/nike.png',
-    ],
+    banners: [] as Array<{ imageUrl: string; id: number }>,
     defaultImage: DEFAULT_PRODUCT_IMG,
   },
   onShow() {
@@ -54,7 +61,17 @@ Page({
       const res: PagedResult<ProductDto> = await getProducts({ page, pageSize, keyword })
       const nextItems = append ? [...(this.data as any).items, ...res.items] : res.items
       const noMore = nextItems.length >= res.total
-      this.setData({ items: nextItems, total: res.total, noMore })
+      const bannerSource = nextItems.length > 0 ? nextItems : res.items
+      const banners = pickRandom(bannerSource, BANNER_COUNT).map((p) => ({
+        imageUrl: p.imageUrl || DEFAULT_PRODUCT_IMG,
+        id: p.id,
+      }))
+      this.setData({
+        items: nextItems,
+        total: res.total,
+        noMore,
+        banners,
+      })
     } catch (e: any) {
       wx.showToast({ title: e?.message || '加载失败', icon: 'none' })
     } finally {
@@ -63,6 +80,14 @@ Page({
   },
   goDetail(e: WechatMiniprogram.BaseEvent) {
     const id = (e.currentTarget.dataset as any).id
+    wx.navigateTo({ url: `/pages/product-detail/index?id=${id}` })
+  },
+  goBannerDetail(e: WechatMiniprogram.BaseEvent) {
+    const id = Number((e.currentTarget.dataset as any).id || 0)
+    if (!id) {
+      wx.showToast({ title: '当前轮播图无商品详情', icon: 'none' })
+      return
+    }
     wx.navigateTo({ url: `/pages/product-detail/index?id=${id}` })
   },
 })

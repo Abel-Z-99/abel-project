@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
 
+# 避免并发推送导致部署交错
+concurrency:
+  group: docker-publish-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
   packages: write
@@ -57,3 +62,46 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  # 阿里云 ECS：SSH 到服务器执行 docker compose pull/up。
+  # 前置：ECS 已安装 Docker / Compose；部署目录含本仓库的 docker-compose.aliyun.yml 与 .env（含 SA_PASSWORD 等）。
+  # Secrets（在「Secrets」页添加，不是 Variables）：ALIYUN_HOST、ALIYUN_USER、ALIYUN_SSH_KEY、ALIYUN_DEPLOY_PATH；
+  #          若 GHCR 包为私有：GHCR_PULL_TOKEN（read:packages），可选 GHCR_USERNAME（与 PAT 所属账号一致，不设则用 github.actor）。
+  deploy-aliyun:
+    name: Deploy to Aliyun ECS
+    needs: publish
+    if: >
+      needs.publish.result == 'success' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 计算 GHCR 镜像名（小写 owner）
+        run: |
+          owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "WEBAPI_IMAGE=ghcr.io/${owner}/webshop-webapi:latest" >> $GITHUB_ENV
+          echo "ADMIN_WEB_IMAGE=ghcr.io/${owner}/webshop-admin-web:latest" >> $GITHUB_ENV
+
+      - name: SSH 登录 ECS 并更新容器
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          WEBAPI_IMAGE: ${{ env.WEBAPI_IMAGE }}
+          ADMIN_WEB_IMAGE: ${{ env.ADMIN_WEB_IMAGE }}
+          GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+          GHCR_USER: ${{ secrets.GHCR_USERNAME }}
+          DEPLOY_PATH: ${{ secrets.ALIYUN_DEPLOY_PATH }}
+        with:
+          host: ${{ secrets.ALIYUN_HOST }}
+          username: ${{ secrets.ALIYUN_USER }}
+          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          envs: WEBAPI_IMAGE,ADMIN_WEB_IMAGE,GHCR_TOKEN,GHCR_USER,DEPLOY_PATH
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "$DEPLOY_PATH"
+            GHCR_LOGIN_USER="${GHCR_USER:-${{ github.actor }}}"
+            if [ -n "${GHCR_TOKEN:-}" ]; then
+              echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_LOGIN_USER" --password-stdin
+            fi
+            export WEBAPI_IMAGE ADMIN_WEB_IMAGE
+            docker compose -f docker-compose.aliyun.yml pull
+            docker compose -f docker-compose.aliyun.yml up -d --remove-orphans

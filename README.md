@@ -50,6 +50,13 @@ WebShop
 - 用户管理（启用/禁用、新增）
 - 小程序端：登录、商品列表、商品详情、下单、订单、我的
 
+## 线上环境（阿里云）
+
+本项目已部署在阿里云。
+
+- **管理后台：** `http://<公网IP或域名>:5173`
+- **后端 API / Swagger：** `http://<公网IP或域名>:5000/swagger`
+
 ## 本地运行
 
 ## 1) 启动后端 WebApi
@@ -152,4 +159,3 @@ docker compose up -d --build
   - `admin-web/.env.development` 的 `VITE_API_TARGET` 是否一致
   - 修改 `.env` 后是否重启了 Vite
 
-#
