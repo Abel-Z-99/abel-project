@@ -107,19 +107,11 @@ jobs:
               echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_LOGIN_USER" --password-stdin
             fi
             export WEBAPI_IMAGE ADMIN_WEB_IMAGE
-            if docker compose version >/dev/null 2>&1; then
-              COMPOSE_CMD="docker compose"
-            elif command -v docker-compose >/dev/null 2>&1; then
-              COMPOSE_CMD="docker-compose"
-            else
-              echo "Neither 'docker compose' nor 'docker-compose' is available on target host."
-              exit 1
-            fi
-            echo "Using compose command: $COMPOSE_CMD"
-            # 仅滚动更新应用容器，避免旧版 docker-compose(v1) 在重建 mssql/redis 时触发 ContainerConfig 兼容问题。
+            docker compose version
+            # 仅滚动更新应用容器，避免重建 mssql/redis 影响现网基础服务。
             pull_ok=0
             for i in 1 2 3; do
-              if $COMPOSE_CMD -f docker-compose.aliyun.yml pull webapi admin-web; then
+              if docker compose -f docker-compose.aliyun.yml pull webapi admin-web; then
                 pull_ok=1
                 break
               fi
@@ -130,12 +122,4 @@ jobs:
               echo "Compose pull failed after retries."
               exit 1
             fi
-            if ! $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --no-deps --force-recreate webapi admin-web; then
-              if [ "$COMPOSE_CMD" = "docker-compose" ]; then
-                echo "Rolling update failed on docker-compose v1, removing app services and retry..."
-                $COMPOSE_CMD -f docker-compose.aliyun.yml rm -sf webapi admin-web || true
-                $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --no-deps --force-recreate webapi admin-web
-              else
-                exit 1
-              fi
-            fi
+            docker compose -f docker-compose.aliyun.yml up -d --no-deps --force-recreate webapi admin-web
