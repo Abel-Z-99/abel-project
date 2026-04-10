@@ -17,8 +17,6 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: ${SA_PASSWORD:-YourStrong@Passw0rd123}
-    ports:
-      - "1433:1433"
     volumes:
       - mssql-data:/var/opt/mssql
     healthcheck:
