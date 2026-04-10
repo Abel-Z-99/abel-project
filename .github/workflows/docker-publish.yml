@@ -95,9 +95,13 @@ jobs:
           key: ${{ secrets.ALIYUN_SSH_KEY }}
           envs: WEBAPI_IMAGE,ADMIN_WEB_IMAGE,GHCR_TOKEN,GHCR_USER,DEPLOY_PATH
           script_stop: true
+          command_timeout: 40m
           script: |
             set -euo pipefail
             cd "$DEPLOY_PATH"
+            # 适配网络较慢时 compose/docker 客户端超时
+            export COMPOSE_HTTP_TIMEOUT=300
+            export DOCKER_CLIENT_TIMEOUT=300
             GHCR_LOGIN_USER="${GHCR_USER:-${{ github.actor }}}"
             if [ -n "${GHCR_TOKEN:-}" ]; then
               echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_LOGIN_USER" --password-stdin
@@ -113,7 +117,19 @@ jobs:
             fi
             echo "Using compose command: $COMPOSE_CMD"
             # 仅滚动更新应用容器，避免旧版 docker-compose(v1) 在重建 mssql/redis 时触发 ContainerConfig 兼容问题。
-            $COMPOSE_CMD -f docker-compose.aliyun.yml pull webapi admin-web
+            pull_ok=0
+            for i in 1 2 3; do
+              if $COMPOSE_CMD -f docker-compose.aliyun.yml pull webapi admin-web; then
+                pull_ok=1
+                break
+              fi
+              echo "Compose pull failed (attempt $i), retrying in 10s..."
+              sleep 10
+            done
+            if [ "$pull_ok" -ne 1 ]; then
+              echo "Compose pull failed after retries."
+              exit 1
+            fi
             if ! $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --no-deps --force-recreate webapi admin-web; then
               if [ "$COMPOSE_CMD" = "docker-compose" ]; then
                 echo "Rolling update failed on docker-compose v1, removing app services and retry..."
