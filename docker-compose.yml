@@ -1,4 +1,13 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: webshop-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: webshop-mssql
@@ -6,7 +15,8 @@ services:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: ${SA_PASSWORD:-YourStrong@Passw0rd123}
     ports:
-      - "1433:1433"
+      # 本机 1433 在部分 Windows 环境可能被系统保留，改用 11433 暴露到宿主机
+      - "11433:1433"
     volumes:
       - mssql-data:/var/opt/mssql
     healthcheck:
@@ -24,8 +34,12 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: Server=mssql;Database=ShopMaster;User Id=sa;Password=${SA_PASSWORD:-YourStrong@Passw0rd123};TrustServerCertificate=True;Encrypt=False;
+      Redis__ConnectionString: redis:6379
+      Redis__DashboardSummaryTtlSeconds: "30"
       Seed__Enabled: "true"
     depends_on:
+      redis:
+        condition: service_started
       mssql:
         condition: service_healthy
     ports:
@@ -44,5 +58,6 @@ services:
       - "5173:80"
 
 volumes:
+  redis-data:
   mssql-data:
   uploads-data:

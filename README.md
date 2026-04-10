@@ -27,6 +27,7 @@ WebShop
 - Entity Framework Core（Migrations）
 - JWT 鉴权
 - Swagger（支持 Bearer Token）
+- Redis（仪表盘统计缓存）
 
 ### Admin Web
 
@@ -120,7 +121,7 @@ export const API_BASE_URL = 'http://localhost:5000/api'
 - `WebApi/Dockerfile`
 - `admin-web/Dockerfile`
 - `admin-web/nginx.conf`
-- `docker-compose.yml`（含 SQL Server / WebApi / admin-web）
+- `docker-compose.yml`（含 Redis / SQL Server / WebApi / admin-web）
 
 在仓库根目录执行：
 
@@ -137,7 +138,18 @@ docker compose up -d --build
 
 - `webapi` 启动时会自动执行 EF Core `Migrate()`，并按配置执行种子数据。
 - SQL Server 默认密码来自 `SA_PASSWORD`，未设置时使用 compose 中的默认值（建议在本地用 `.env` 覆盖）。
+- Redis 默认地址为 `localhost:6379`（Docker 里 `webapi` 使用 `redis:6379`），用于缓存管理端仪表盘统计结果。
 - 上传图片目录已挂载卷：`/app/wwwroot/uploads`。
+
+## Redis 使用说明
+
+当前已落地 Redis 缓存场景：
+
+- **仪表盘汇总缓存**（`DashboardService.GetSummaryAsync`）
+  - 缓存键：`dashboard:summary:<UTC日期>`
+  - 默认 TTL：`30` 秒（配置项：`Redis:DashboardSummaryTtlSeconds`）
+  - 目的：减少管理后台首页的多次 `Count/Sum` 聚合查询，提升响应速度
+  - 降级：Redis 不可用时自动回退数据库查询，并记录 Warning 日志，不影响主流程
 
 ## CI/CD（GitHub Actions）
 

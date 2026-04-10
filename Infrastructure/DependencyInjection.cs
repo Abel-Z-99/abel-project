@@ -9,6 +9,7 @@ using Infrastructure.Data;
 using Infrastructure.Orders;
 using Infrastructure.Products;
 using Infrastructure.Users;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,21 @@ public static class DependencyInjection
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        var redisConnectionString = configuration["Redis:ConnectionString"];
+        if (!string.IsNullOrWhiteSpace(redisConnectionString))
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = "webshop:";
+            });
+        }
+        else
+        {
+            // 无 Redis 配置时回退到进程内缓存，保证本地最小可运行。
+            services.AddDistributedMemoryCache();
+        }
 
         services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
 
