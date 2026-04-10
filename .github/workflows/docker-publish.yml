@@ -103,5 +103,14 @@ jobs:
               echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_LOGIN_USER" --password-stdin
             fi
             export WEBAPI_IMAGE ADMIN_WEB_IMAGE
-            docker compose -f docker-compose.aliyun.yml pull
-            docker compose -f docker-compose.aliyun.yml up -d --remove-orphans
+            if docker compose version >/dev/null 2>&1; then
+              COMPOSE_CMD="docker compose"
+            elif command -v docker-compose >/dev/null 2>&1; then
+              COMPOSE_CMD="docker-compose"
+            else
+              echo "Neither 'docker compose' nor 'docker-compose' is available on target host."
+              exit 1
+            fi
+            echo "Using compose command: $COMPOSE_CMD"
+            $COMPOSE_CMD -f docker-compose.aliyun.yml pull
+            $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --remove-orphans
