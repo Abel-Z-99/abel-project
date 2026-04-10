@@ -112,13 +112,13 @@ jobs:
               exit 1
             fi
             echo "Using compose command: $COMPOSE_CMD"
-            $COMPOSE_CMD -f docker-compose.aliyun.yml pull
-            if ! $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --remove-orphans; then
-              # 兼容旧版 docker-compose(v1) 在重建容器时偶发 ContainerConfig/network 相关报错。
+            # 仅滚动更新应用容器，避免旧版 docker-compose(v1) 在重建 mssql/redis 时触发 ContainerConfig 兼容问题。
+            $COMPOSE_CMD -f docker-compose.aliyun.yml pull webapi admin-web
+            if ! $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --no-deps --force-recreate webapi admin-web; then
               if [ "$COMPOSE_CMD" = "docker-compose" ]; then
-                echo "First compose up failed on docker-compose v1, trying 'down' and force recreate..."
-                $COMPOSE_CMD -f docker-compose.aliyun.yml down --remove-orphans || true
-                $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --remove-orphans --force-recreate
+                echo "Rolling update failed on docker-compose v1, removing app services and retry..."
+                $COMPOSE_CMD -f docker-compose.aliyun.yml rm -sf webapi admin-web || true
+                $COMPOSE_CMD -f docker-compose.aliyun.yml up -d --no-deps --force-recreate webapi admin-web
               else
                 exit 1
               fi
