@@ -2,7 +2,7 @@
 # 部署目录内需有 .env（至少 SA_PASSWORD），并在部署时设置 WEBAPI_IMAGE、ADMIN_WEB_IMAGE。
 services:
   redis:
-    image: redis:7-alpine
+    image: m.daocloud.io/docker.io/redis:7-alpine
     container_name: webshop-redis
     restart: unless-stopped
     ports:
